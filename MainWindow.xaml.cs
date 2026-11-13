@@ -1,364 +1,317 @@
-<Window x:Class="TailorShop.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Aqib Shah Tailoring &amp; Clothing"
-        Width="1400" Height="900"
-        WindowStartupLocation="CenterScreen"
-        Background="#050505"
-        ResizeMode="CanResize">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using Microsoft.Data.Sqlite;
+using Microsoft.Win32;
 
-        <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#D4A63F" BorderThickness="0,0,1,0">
-            <StackPanel Margin="18,20,12,20">
-                <Border Width="170" Height="170" CornerRadius="90" BorderBrush="#D4A63F" BorderThickness="3" Background="#090909" HorizontalAlignment="Center">
-                    <Grid>
-                        <Ellipse Width="150" Height="150" Stroke="#D4A63F" StrokeThickness="4" Fill="Transparent"/>
-                        <Path Data="M75,68 L95,82 L115,68 L138,82 L142,110 L118,122 L103,112 L95,142 L87,112 L72,122 L48,110 L52,82 Z" Fill="#0A0A0A" Stroke="#D4A63F" StrokeThickness="2"/>
-                        <Path Data="M63,90 L95,118 L128,90" Stroke="#D4A63F" StrokeThickness="3" Fill="Transparent"/>
-                        <Path Data="M55,120 L82,155" Stroke="#D4A63F" StrokeThickness="3"/>
-                        <Path Data="M135,120 L108,155" Stroke="#D4A63F" StrokeThickness="3"/>
-                        <Path Data="M94,118 L94,156" Stroke="#D4A63F" StrokeThickness="3"/>
-                    </Grid>
-                </Border>
+namespace TailorShop;
 
-                <TextBlock Text="TAILOR" FontSize="42" FontWeight="Bold" Foreground="#E7C96A" FontFamily="Impact" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <TextBlock Text="Tailoring Manager" Foreground="#C8B777" FontSize="14" HorizontalAlignment="Center" Margin="0,4,0,18"/>
+public partial class MainWindow : Window
+{
+    private readonly DatabaseService _database = new();
+    private bool _ready;
 
-                <Button x:Name="navDashboard" Tag="Dashboard" Background="#191919" Foreground="#F5D57A" BorderBrush="#D4A63F" Margin="0,8,0,6" Height="42" FontWeight="Bold" Click="Nav_Click">Dashboard</Button>
-                <Button x:Name="navCustomers" Tag="Customers" Margin="0,6" Height="42" Click="Nav_Click">Customers</Button>
-                <Button x:Name="navOrders" Tag="Orders" Margin="0,6" Height="42" Click="Nav_Click">Orders</Button>
-                <Button x:Name="navMeasurements" Tag="Measurements" Margin="0,6" Height="42" Click="Nav_Click">Measurements</Button>
-                <Button x:Name="navPayments" Tag="Payments" Margin="0,6" Height="42" Click="Nav_Click">Payments</Button>
-                <Button x:Name="navBackup" Tag="Backup" Margin="0,26,0,6" Height="42" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A" Click="Backup_Click">Backup</Button>
-            </StackPanel>
-        </Border>
+    public MainWindow()
+    {
+        InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
 
-        <Grid Grid.Column="1" Background="#090909">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            DatabaseService.Initialize();
+            OrderStatusCombo.ItemsSource = new[] { "New", "Doing", "Done", "Delivered" };
+            OrderStatusCombo.SelectedIndex = 0;
+            OrderDueDatePicker.SelectedDate = DateTime.Today.AddDays(7);
+            PaymentDatePicker.SelectedDate = DateTime.Today;
+            _ready = true;
+            LoadAll();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not initialize the local database.\n\n{ex.Message}", "Startup error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
-            <Border Grid.Row="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="0,0,0,1" Padding="26,20">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+    private void LoadAll()
+    {
+        LoadCustomers();
+        LoadOrders();
+        LoadPayments();
+        LoadDashboard();
+    }
 
-                    <StackPanel>
-                        <TextBlock Text="Aqib Shah Tailoring &amp; Clothing" Foreground="#F5D57A" FontSize="30" FontWeight="Bold"/>
-                        <TextBlock Text="Professional tailor management system" Foreground="#B7B3AC" FontSize="14" Margin="0,6,0,0"/>
-                    </StackPanel>
+    private void LoadCustomers()
+    {
+        var customers = _database.GetCustomers();
+        CustomersGrid.ItemsSource = customers;
+        OrderCustomerCombo.ItemsSource = customers;
+    }
 
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Content="Export" Width="120" Height="42" Margin="0,0,10,0" Click="Export_Click"/>
-                        <Button Content="Import" Width="120" Height="42" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A" Click="Import_Click"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+    private void LoadOrders()
+    {
+        var orders = _database.GetOrders();
+        OrderGrid.ItemsSource = orders;
+        PaymentOrderCombo.ItemsSource = orders;
+    }
 
-            <Grid Grid.Row="1" Margin="26">
-                <Grid x:Name="DashboardPage" Visibility="Visible">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+    private void LoadPayments()
+    {
+        PaymentsGrid.ItemsSource = _database.GetPayments();
+    }
 
-                    <Grid Grid.Row="0" Margin="0,0,0,18">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
+    private void LoadDashboard()
+    {
+        var summary = _database.GetDashboardSummary();
+        DashboardCustomersCount.Text = summary.CustomersCount.ToString(CultureInfo.CurrentCulture);
+        DashboardActiveOrders.Text = summary.ActiveOrders.ToString(CultureInfo.CurrentCulture);
+        DashboardTodayIncome.Text = $"{summary.TodayIncome:N0} AFN";
+        DashboardOutstanding.Text = $"{summary.Outstanding:N0} AFN";
+        DashboardOrdersGrid.ItemsSource = _database.GetRecentOrders(8);
+    }
 
-                        <Border Grid.Column="0" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Customers" Foreground="#B7B3AC" FontSize="13"/>
-                                <TextBlock x:Name="DashboardCustomersCount" Text="0" Foreground="#F5D57A" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
+    private void Nav_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        ShowPage(button.Tag?.ToString() ?? "Dashboard");
+    }
 
-                        <Border Grid.Column="1" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Active Orders" Foreground="#B7B3AC" FontSize="13"/>
-                                <TextBlock x:Name="DashboardActiveOrders" Text="0" Foreground="#7DE0A3" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
+    private void ShowPage(string page)
+    {
+        DashboardPage.Visibility = page == "Dashboard" ? Visibility.Visible : Visibility.Collapsed;
+        CustomersPage.Visibility = page == "Customers" ? Visibility.Visible : Visibility.Collapsed;
+        OrdersPage.Visibility = page == "Orders" ? Visibility.Visible : Visibility.Collapsed;
+        PaymentsPage.Visibility = page == "Payments" ? Visibility.Visible : Visibility.Collapsed;
 
-                        <Border Grid.Column="2" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Today Income" Foreground="#B7B3AC" FontSize="13"/>
-                                <TextBlock x:Name="DashboardTodayIncome" Text="$0" Foreground="#7DE0A3" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
+        foreach (var button in new[] { navDashboard, navCustomers, navOrders, navPayments })
+        {
+            var active = string.Equals(button.Tag?.ToString(), page, StringComparison.OrdinalIgnoreCase);
+            button.Background = active ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(25, 25, 25)) : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(18, 18, 18));
+            button.Foreground = active ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(245, 213, 122)) : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 241, 235));
+        }
+    }
 
-                        <Border Grid.Column="3" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Outstanding" Foreground="#B7B3AC" FontSize="13"/>
-                                <TextBlock x:Name="DashboardOutstanding" Text="$0" Foreground="#FF6B6B" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+    private void CustomersGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (CustomersGrid.SelectedItem is not Customer customer) return;
+        CustomerIdText.Text = customer.Id.ToString(CultureInfo.InvariantCulture);
+        CustomerNameText.Text = customer.Name;
+        CustomerPhoneText.Text = customer.Phone;
+        CustomerNoteText.Text = customer.Note;
+    }
 
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
+    private void SaveCustomer_Click(object sender, RoutedEventArgs e)
+    {
+        var name = CustomerNameText.Text.Trim();
+        if (name.Length == 0)
+        {
+            Warn("Customer name is required.");
+            CustomerNameText.Focus();
+            return;
+        }
 
-                        <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="Recent Orders" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
-                                <DataGrid x:Name="DashboardOrdersGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" Foreground="#F5F5F5" BorderThickness="0">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="No." Binding="{Binding Id}" Width="70"/>
-                                        <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                        <DataGridTextColumn Header="Item" Binding="{Binding Item}" Width="*"/>
-                                        <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C0}}" Width="120"/>
-                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </Grid>
-                        </Border>
+        try
+        {
+            _database.SaveCustomer(new Customer
+            {
+                Id = int.TryParse(CustomerIdText.Text, out var id) ? id : 0,
+                Name = name,
+                Phone = CustomerPhoneText.Text.Trim(),
+                Note = CustomerNoteText.Text.Trim()
+            });
+            ClearCustomerForm();
+            LoadCustomers();
+            LoadOrders();
+            LoadPayments();
+            LoadDashboard();
+        }
+        catch (Exception ex) { ShowError("Could not save customer", ex); }
+    }
 
-                        <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                            <StackPanel>
-                                <TextBlock Text="Quick Actions" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
-                                <Button Height="42" Margin="0,0,0,10" Click="NewCustomer_Click">New Customer</Button>
-                                <Button Height="42" Margin="0,0,0,10" Click="NewOrder_Click">New Order</Button>
-                                <Button Height="42" Margin="0,0,0,10" Click="NewMeasurement_Click">New Measurement</Button>
-                                <Button Height="42" Margin="0,0,0,10" Click="NewPayment_Click">Receive Payment</Button>
-                                <Button Height="42" Margin="0,0,0,10" Click="Export_Click">Export Backup</Button>
-                                <Button Height="42" Click="Import_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Import Backup</Button>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Grid>
+    private void ClearCustomer_Click(object sender, RoutedEventArgs e) => ClearCustomerForm();
 
-                <Grid x:Name="CustomersPage" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1.3*"/>
-                    </Grid.ColumnDefinitions>
+    private void ClearCustomerForm()
+    {
+        CustomerIdText.Clear();
+        CustomerNameText.Clear();
+        CustomerPhoneText.Clear();
+        CustomerNoteText.Clear();
+        CustomersGrid.SelectedItem = null;
+    }
 
-                    <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+    private void NewCustomer_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage("Customers");
+        ClearCustomerForm();
+        CustomerNameText.Focus();
+    }
 
-                            <TextBlock Text="Customers" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                            <DataGrid x:Name="CustomersGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderThickness="0" Foreground="#F5F5F5" SelectionChanged="CustomersGrid_SelectionChanged">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
-                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="170"/>
-                                    <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </Border>
+    private void OrderGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (OrderGrid.SelectedItem is not Order order) return;
+        OrderIdText.Text = order.Id.ToString(CultureInfo.InvariantCulture);
+        OrderCustomerCombo.SelectedValue = order.CustomerId;
+        OrderItemText.Text = order.Item;
+        OrderPriceText.Text = order.Price.ToString(CultureInfo.CurrentCulture);
+        OrderDueDatePicker.SelectedDate = DateTime.TryParseExact(order.DueDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var due) ? due : DateTime.Today.AddDays(7);
+        OrderStatusCombo.SelectedItem = order.Status;
+        OrderNoteText.Text = order.Note;
+    }
 
-                    <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <StackPanel>
-                            <TextBlock Text="Customer Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                            <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="CustomerIdText" IsReadOnly="True" Margin="0,0,0,10"/>
-                            <TextBlock Text="Name" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="CustomerNameText" Margin="0,0,0,10"/>
-                            <TextBlock Text="Phone" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="CustomerPhoneText" Margin="0,0,0,10"/>
-                            <TextBlock Text="Note" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="CustomerNoteText" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Width="110" Margin="0,0,10,0" Click="ClearCustomer_Click">Clear</Button>
-                                <Button Width="110" Click="SaveCustomer_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Grid>
+    private void SaveOrder_Click(object sender, RoutedEventArgs e)
+    {
+        if (OrderCustomerCombo.SelectedItem is not Customer customer)
+        {
+            Warn("Select a customer for this order.");
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(OrderItemText.Text))
+        {
+            Warn("Enter an item or work description.");
+            OrderItemText.Focus();
+            return;
+        }
+        if (!decimal.TryParse(OrderPriceText.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out var price) || price < 0)
+        {
+            Warn("Enter a valid non-negative price.");
+            OrderPriceText.Focus();
+            return;
+        }
 
-                <Grid x:Name="OrdersPage" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1.3*"/>
-                    </Grid.ColumnDefinitions>
+        try
+        {
+            _database.SaveOrder(new Order
+            {
+                Id = int.TryParse(OrderIdText.Text, out var id) ? id : 0,
+                CustomerId = customer.Id,
+                CustomerName = customer.Name,
+                Item = OrderItemText.Text.Trim(),
+                Price = price,
+                DueDate = OrderDueDatePicker.SelectedDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                Status = OrderStatusCombo.SelectedItem?.ToString() ?? "New",
+                Note = OrderNoteText.Text.Trim()
+            });
+            ClearOrderForm();
+            LoadOrders();
+            LoadPayments();
+            LoadDashboard();
+        }
+        catch (Exception ex) { ShowError("Could not save order", ex); }
+    }
 
-                    <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+    private void ClearOrder_Click(object sender, RoutedEventArgs e) => ClearOrderForm();
 
-                            <TextBlock Text="Orders" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                            <DataGrid x:Name="OrderGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderThickness="0" Foreground="#F5F5F5" SelectionChanged="OrderGrid_SelectionChanged">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                                    <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                    <DataGridTextColumn Header="Item" Binding="{Binding Item}" Width="*"/>
-                                    <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C0}}" Width="120"/>
-                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110"/>
-                                    <DataGridTextColumn Header="Due" Binding="{Binding DueDate}" Width="120"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </Border>
+    private void ClearOrderForm()
+    {
+        OrderIdText.Clear();
+        OrderCustomerCombo.SelectedItem = null;
+        OrderItemText.Clear();
+        OrderPriceText.Clear();
+        OrderDueDatePicker.SelectedDate = DateTime.Today.AddDays(7);
+        OrderStatusCombo.SelectedIndex = 0;
+        OrderNoteText.Clear();
+        OrderGrid.SelectedItem = null;
+    }
 
-                    <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <StackPanel>
-                            <TextBlock Text="Order Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                            <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="OrderIdText" IsReadOnly="True" Margin="0,0,0,10"/>
-                            <TextBlock Text="Customer" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <ComboBox x:Name="OrderCustomerCombo" Margin="0,0,0,10"/>
-                            <TextBlock Text="Item" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="OrderItemText" Margin="0,0,0,10"/>
-                            <TextBlock Text="Price" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="OrderPriceText" Margin="0,0,0,10"/>
-                            <TextBlock Text="Due Date" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <DatePicker x:Name="OrderDueDatePicker" Margin="0,0,0,10"/>
-                            <TextBlock Text="Status" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <ComboBox x:Name="OrderStatusCombo" Margin="0,0,0,10"/>
-                            <TextBlock Text="Note" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="OrderNoteText" Height="90" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Width="110" Margin="0,0,10,0" Click="ClearOrder_Click">Clear</Button>
-                                <Button Width="110" Click="SaveOrder_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Grid>
+    private void NewOrder_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage("Orders");
+        ClearOrderForm();
+        if (OrderCustomerCombo.Items.Count == 0)
+        {
+            Warn("Add a customer before creating an order.");
+            ShowPage("Customers");
+            return;
+        }
+        OrderCustomerCombo.Focus();
+    }
 
-                <Grid x:Name="MeasurementsPage" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1.5*"/>
-                    </Grid.ColumnDefinitions>
+    private void SavePayment_Click(object sender, RoutedEventArgs e)
+    {
+        if (PaymentOrderCombo.SelectedItem is not Order order)
+        {
+            Warn("Select an order to receive a payment.");
+            return;
+        }
+        if (!decimal.TryParse(PaymentAmountText.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out var amount) || amount <= 0)
+        {
+            Warn("Enter a valid payment amount greater than zero.");
+            PaymentAmountText.Focus();
+            return;
+        }
 
-                    <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+        try
+        {
+            var date = PaymentDatePicker.SelectedDate ?? DateTime.Today;
+            _database.SavePayment(order.Id, amount, date);
+            ClearPaymentForm();
+            LoadOrders();
+            LoadPayments();
+            LoadDashboard();
+        }
+        catch (Exception ex) { ShowError("Could not record payment", ex); }
+    }
 
-                            <TextBlock Text="Measurements" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                            <DataGrid x:Name="MeasurementsGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderThickness="0" Foreground="#F5F5F5" SelectionChanged="MeasurementsGrid_SelectionChanged">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                                    <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                    <DataGridTextColumn Header="Shirt" Binding="{Binding ShirtLength}" Width="90"/>
-                                    <DataGridTextColumn Header="Sleeve" Binding="{Binding Sleeve}" Width="90"/>
-                                    <DataGridTextColumn Header="Pants" Binding="{Binding PantsLength}" Width="90"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </Border>
+    private void ClearPayment_Click(object sender, RoutedEventArgs e) => ClearPaymentForm();
 
-                    <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <StackPanel>
-                            <TextBlock Text="Measurement Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                            <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="MeasurementIdText" IsReadOnly="True" Margin="0,0,0,8"/>
-                            <TextBlock Text="Customer" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <ComboBox x:Name="MeasurementCustomerCombo" Margin="0,0,0,8"/>
+    private void ClearPaymentForm()
+    {
+        PaymentOrderCombo.SelectedItem = null;
+        PaymentAmountText.Clear();
+        PaymentDatePicker.SelectedDate = DateTime.Today;
+    }
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
+    private void NewPayment_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage("Payments");
+        ClearPaymentForm();
+        if (PaymentOrderCombo.Items.Count == 0)
+            Warn("Create an order before recording a payment.");
+    }
 
-                                <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                                    <TextBlock Text="Shirt Length" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="ShirtLengthText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Sleeve" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="SleeveText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Shoulder" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="ShoulderText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Neck" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="NeckText" Margin="0,0,0,8"/>
-                                </StackPanel>
+    private void Backup_Click(object sender, RoutedEventArgs e) => Export_Click(sender, e);
 
-                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                    <TextBlock Text="Chati" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="ChatiText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Bagal" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="BagalText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Daman" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="DamanText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Pants Length" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="PantsLengthText" Margin="0,0,0,8"/>
-                                    <TextBlock Text="Pants Hem" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="PantsHemText" Margin="0,0,0,8"/>
-                                </StackPanel>
-                            </Grid>
+    private void Export_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = "SQLite database backup (*.db)|*.db",
+            FileName = $"AqibShah-{DateTime.Today:yyyy-MM-dd}.db",
+            Title = "Export database backup"
+        };
+        if (dialog.ShowDialog(this) != true) return;
 
-                            <TextBlock Text="Notes" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="MeasurementNotesText" Height="90" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
+        try
+        {
+            _database.ExportBackup(dialog.FileName);
+            MessageBox.Show("Backup exported successfully.", "Backup", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex) { ShowError("Backup export failed", ex); }
+    }
 
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Width="110" Margin="0,0,10,0" Click="ClearMeasurement_Click">Clear</Button>
-                                <Button Width="110" Click="SaveMeasurement_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Grid>
+    private void Import_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Filter = "SQLite database backup (*.db)|*.db",
+            Title = "Import database backup"
+        };
+        if (dialog.ShowDialog(this) != true) return;
+        if (MessageBox.Show("Importing replaces the current database. Continue?", "Confirm restore", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
 
-                <Grid x:Name="PaymentsPage" Visibility="Collapsed">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1.3*"/>
-                    </Grid.ColumnDefinitions>
+        try
+        {
+            _database.ImportBackup(dialog.FileName);
+            LoadAll();
+            MessageBox.Show("Backup imported successfully.", "Restore", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex) { ShowError("Backup import failed", ex); }
+    }
 
-                    <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="Payments" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                            <DataGrid x:Name="PaymentsGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderThickness="0" Foreground="#F5F5F5">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
-                                    <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                    <DataGridTextColumn Header="Order" Binding="{Binding OrderId}" Width="90"/>
-                                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat={}{0:C0}}" Width="150"/>
-                                    <DataGridTextColumn Header="Paid On" Binding="{Binding PaidOn}" Width="120"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </Border>
+    private void Warn(string message) => MessageBox.Show(message, "Check input", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                    <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                        <StackPanel>
-                            <TextBlock Text="Receive Payment" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                            <TextBlock Text="Order" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <ComboBox x:Name="PaymentOrderCombo" Margin="0,0,0,10"/>
-                            <TextBlock Text="Amount" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <TextBox x:Name="PaymentAmountText" Margin="0,0,0,10"/>
-                            <TextBlock Text="Paid On" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                            <DatePicker x:Name="PaymentDatePicker" Margin="0,0,0,14"/>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Width="110" Margin="0,0,10,0" Click="ClearPayment_Click">Clear</Button>
-                                <Button Width="110" Click="SavePayment_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Grid>
-        </Grid>
-    </Grid>
-</Window>
+    private void ShowError(string action, Exception ex) =>
+        MessageBox.Show($"{action}.\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+}

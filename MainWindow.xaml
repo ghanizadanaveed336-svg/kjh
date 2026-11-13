@@ -1,293 +1,177 @@
 <Window x:Class="TailorShop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Aqib Shah Tailoring &amp; Clothing"
-        Width="1500" Height="980"
-        WindowStartupLocation="CenterScreen"
-        Background="#050505"
-        ResizeMode="CanResize">
-    <Grid Margin="18">
-        <Border CornerRadius="28" Background="#0B0B0B" BorderBrush="#D4A63F" BorderThickness="1.5">
+        Title="Aqib Shah Tailoring &amp; Clothing" Width="1500" Height="940"
+        MinWidth="1120" MinHeight="720" WindowStartupLocation="CenterScreen"
+        Background="#050505" ResizeMode="CanResize">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Gold" Color="#D4A63F"/>
+        <SolidColorBrush x:Key="GoldLight" Color="#F5D57A"/>
+        <SolidColorBrush x:Key="Panel" Color="#121212"/>
+        <SolidColorBrush x:Key="Muted" Color="#B7B3AC"/>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#171717"/><Setter Property="Foreground" Value="#F4F1EB"/>
+            <Setter Property="BorderBrush" Value="#4C3B1A"/><Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/><Setter Property="Margin" Value="0,4"/><Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#0D0D0D"/><Setter Property="Foreground" Value="#F4F1EB"/>
+            <Setter Property="BorderBrush" Value="#414141"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="8,6"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#0D0D0D"/><Setter Property="Foreground" Value="#F4F1EB"/>
+            <Setter Property="BorderBrush" Value="#414141"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Padding" Value="7,5"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#111111"/><Setter Property="Foreground" Value="#F4F1EB"/>
+            <Setter Property="RowBackground" Value="#111111"/><Setter Property="AlternatingRowBackground" Value="#191919"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/><Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#282828"/><Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/><Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/><Setter Property="AutoGenerateColumns" Value="False"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="14">
+        <Border CornerRadius="24" Background="#0A0A0A" BorderBrush="#72551F" BorderThickness="1">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="280"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Border Grid.Column="0" Background="#111111" BorderBrush="#D4A63F" BorderThickness="0,0,1,0">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="250"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Background="#101010" BorderBrush="#493717" BorderThickness="0,0,1,0" CornerRadius="24,0,0,24">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <StackPanel Margin="18,28,18,16">
-                            <Border Width="170" Height="170" CornerRadius="90" BorderBrush="#D4A63F" BorderThickness="3" Background="#0A0A0A" HorizontalAlignment="Center">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                        <StackPanel Margin="18,24,18,16">
+                            <Border Width="150" Height="150" CornerRadius="75" BorderBrush="#D4A63F" BorderThickness="3" Background="#080808" HorizontalAlignment="Center">
                                 <Grid>
-                                    <Ellipse Width="152" Height="152" Stroke="#D4A63F" StrokeThickness="4" Fill="Transparent"/>
-                                    <Path Data="M75,68 L95,82 L115,68 L138,82 L142,110 L118,122 L103,112 L95,142 L87,112 L72,122 L48,110 L52,82 Z" Fill="#0D0D0D" Stroke="#D4A63F" StrokeThickness="2"/>
-                                    <Path Data="M63,90 L95,118 L128,90" Stroke="#D4A63F" StrokeThickness="3" Fill="Transparent"/>
-                                    <Path Data="M55,120 L82,155" Stroke="#D4A63F" StrokeThickness="3"/>
-                                    <Path Data="M135,120 L108,155" Stroke="#D4A63F" StrokeThickness="3"/>
-                                    <Path Data="M94,118 L94,156" Stroke="#D4A63F" StrokeThickness="3"/>
+                                    <Ellipse Margin="10" Stroke="#D4A63F" StrokeThickness="2"/>
+                                    <Path Data="M42,48 L58,60 L75,48 L92,60 L96,82 L76,89 L69,82 L66,112 L60,82 L52,89 L32,82 L35,60 Z" Fill="#111111" Stroke="#E2BD58" StrokeThickness="2"/>
+                                    <Path Data="M46,63 L66,82 L86,63" Stroke="#F5D57A" StrokeThickness="2"/>
                                 </Grid>
                             </Border>
-
-                            <TextBlock Text="TAILOR" Foreground="#E9CE6D" FontSize="42" FontWeight="Bold" FontFamily="Impact" HorizontalAlignment="Center" Margin="0,12,0,0"/>
-                            <TextBlock Text="Tailoring Manager" Foreground="#C7BB86" FontSize="13" HorizontalAlignment="Center" Margin="0,4,0,18"/>
+                            <TextBlock Text="TAILOR" Foreground="#E9CE6D" FontSize="38" FontWeight="Bold" FontFamily="Impact" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                            <TextBlock Text="Aqib Shah • Tailoring &amp; Clothing" Foreground="#C7BB86" FontSize="11" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </StackPanel>
-
-                        <StackPanel Grid.Row="1" Margin="18,0,18,18">
-                            <Button x:Name="navDashboard" Tag="Dashboard" Background="#191919" Foreground="#F5D57A" BorderBrush="#D4A63F" Margin="0,0,0,8" Height="46" FontWeight="Bold" Click="Nav_Click">Dashboard</Button>
-                            <Button x:Name="navCustomers" Tag="Customers" Margin="0,0,0,8" Height="46" Click="Nav_Click">Customers</Button>
-                            <Button x:Name="navOrders" Tag="Orders" Margin="0,0,0,8" Height="46" Click="Nav_Click">Orders</Button>
-                            <Button x:Name="navPayments" Tag="Payments" Margin="0,0,0,8" Height="46" Click="Nav_Click">Payments</Button>
-                            <Button x:Name="navBackup" Tag="Backup" Margin="0,26,0,0" Height="46" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A" Click="Backup_Click">Backup</Button>
+                        <StackPanel Grid.Row="1" Margin="18,10,18,20">
+                            <Button x:Name="navDashboard" Tag="Dashboard" Click="Nav_Click" Background="#292113" Foreground="#F5D57A" BorderBrush="#D4A63F">⌂   Dashboard</Button>
+                            <Button x:Name="navCustomers" Tag="Customers" Click="Nav_Click">♙   Customers</Button>
+                            <Button x:Name="navOrders" Tag="Orders" Click="Nav_Click">✂   Orders</Button>
+                            <Button x:Name="navPayments" Tag="Payments" Click="Nav_Click">◈   Payments</Button>
+                            <Button Margin="0,22,0,0" Click="Export_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold">Export database backup</Button>
+                            <Button Click="Import_Click">Restore backup…</Button>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <Grid Grid.Column="1" Background="#090909">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="0,0,0,1" Padding="26,22">
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Border Background="#111111" BorderBrush="#262626" BorderThickness="0,0,0,1" Padding="26,19">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock Text="Aqib Shah Tailoring &amp; Clothing" Foreground="#F5D57A" FontSize="30" FontWeight="Bold"/>
-                                <TextBlock Text="Professional tailor management system" Foreground="#B7B3AC" FontSize="14" Margin="0,6,0,0"/>
+                                <TextBlock Text="Aqib Shah Tailoring &amp; Clothing" Foreground="#F5D57A" FontSize="26" FontWeight="Bold"/>
+                                <TextBlock Text="Customer records • Tailoring orders • Payments" Foreground="#A6A39C" FontSize="13" Margin="0,4,0,0"/>
                             </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button Content="Export" Width="120" Height="42" Margin="0,0,10,0" Click="Export_Click"/>
-                                <Button Content="Import" Width="120" Height="42" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A" Click="Import_Click"/>
-                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="OFFLINE • LOCAL SQLITE" Foreground="#9B8B61" FontSize="11" VerticalAlignment="Center" Margin="20,0,2,0"/>
                         </Grid>
                     </Border>
 
-                    <Grid Grid.Row="1" Margin="26">
+                    <Grid Grid.Row="1" Margin="24">
                         <Grid x:Name="DashboardPage" Visibility="Visible">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0" Margin="0,0,0,18">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="Customers" Foreground="#B7B3AC" FontSize="13"/>
-                                        <TextBlock x:Name="DashboardCustomersCount" Text="0" Foreground="#F5D57A" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="1" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="Active Orders" Foreground="#B7B3AC" FontSize="13"/>
-                                        <TextBlock x:Name="DashboardActiveOrders" Text="0" Foreground="#7DE0A3" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="2" Margin="0,0,10,0" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="Today Income" Foreground="#B7B3AC" FontSize="13"/>
-                                        <TextBlock x:Name="DashboardTodayIncome" Text="$0" Foreground="#7DE0A3" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Column="3" Background="#171717" CornerRadius="18" Padding="18" BorderBrush="#2E2E2E" BorderThickness="1">
-                                    <StackPanel>
-                                        <TextBlock Text="Outstanding" Foreground="#B7B3AC" FontSize="13"/>
-                                        <TextBlock x:Name="DashboardOutstanding" Text="$0" Foreground="#FF6B6B" FontSize="34" FontWeight="Bold" Margin="0,10,0,0"/>
-                                    </StackPanel>
-                                </Border>
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Margin="0,0,10,0" Background="#171717" BorderBrush="#30291C" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel><TextBlock Text="CUSTOMERS" Foreground="#A6A39C" FontSize="11"/><TextBlock x:Name="DashboardCustomersCount" Text="0" Foreground="#F5D57A" FontSize="32" FontWeight="Bold" Margin="0,8,0,0"/></StackPanel></Border>
+                                <Border Grid.Column="1" Margin="0,0,10,0" Background="#171717" BorderBrush="#30291C" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel><TextBlock Text="ACTIVE ORDERS" Foreground="#A6A39C" FontSize="11"/><TextBlock x:Name="DashboardActiveOrders" Text="0" Foreground="#7DE0A3" FontSize="32" FontWeight="Bold" Margin="0,8,0,0"/></StackPanel></Border>
+                                <Border Grid.Column="2" Margin="0,0,10,0" Background="#171717" BorderBrush="#30291C" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel><TextBlock Text="TODAY'S INCOME" Foreground="#A6A39C" FontSize="11"/><TextBlock x:Name="DashboardTodayIncome" Text="0 AFN" Foreground="#7DE0A3" FontSize="28" FontWeight="Bold" Margin="0,8,0,0"/></StackPanel></Border>
+                                <Border Grid.Column="3" Background="#171717" BorderBrush="#30291C" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel><TextBlock Text="OUTSTANDING" Foreground="#A6A39C" FontSize="11"/><TextBlock x:Name="DashboardOutstanding" Text="0 AFN" Foreground="#FF7770" FontSize="28" FontWeight="Bold" Margin="0,8,0,0"/></StackPanel></Border>
                             </Grid>
-
                             <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="Recent Orders" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
-                                        <DataGrid x:Name="DashboardOrdersGrid" Grid.Row="1" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderBrush="#2E2E2E" Foreground="#F4F1EB">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                                <Border Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="16">
+                                    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <TextBlock Text="Recent Orders" Foreground="#F5D57A" FontSize="19" FontWeight="Bold" Margin="0,0,0,12"/>
+                                        <DataGrid x:Name="DashboardOrdersGrid" Grid.Row="1" IsReadOnly="True">
                                             <DataGrid.Columns>
-                                                <DataGridTextColumn Header="No." Binding="{Binding Id}" Width="70"/>
+                                                <DataGridTextColumn Header="No." Binding="{Binding Id}" Width="65"/>
                                                 <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                                <DataGridTextColumn Header="Item" Binding="{Binding Item}" Width="*"/>
-                                                <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C0}}" Width="120"/>
-                                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
+                                                <DataGridTextColumn Header="Work" Binding="{Binding Item}" Width="*"/>
+                                                <DataGridTextColumn Header="Price (AFN)" Binding="{Binding Price, StringFormat=N0}" Width="110"/>
+                                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="95"/>
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Grid>
                                 </Border>
-
-                                <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                    <StackPanel>
-                                        <TextBlock Text="Quick Actions" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
-                                        <Button Height="42" Margin="0,0,0,10" Click="NewCustomer_Click">New Customer</Button>
-                                        <Button Height="42" Margin="0,0,0,10" Click="NewOrder_Click">New Order</Button>
-                                        <Button Height="42" Margin="0,0,0,10" Click="NewPayment_Click">Receive Payment</Button>
-                                        <Button Height="42" Margin="0,0,0,10" Click="Export_Click">Export Backup</Button>
-                                        <Button Height="42" Click="Import_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Import Backup</Button>
+                                <Border Grid.Column="1" Margin="16,0,0,0" Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="18">
+                                    <StackPanel><TextBlock Text="Quick Actions" Foreground="#F5D57A" FontSize="19" FontWeight="Bold" Margin="0,0,0,10"/>
+                                        <Button Click="NewCustomer_Click">+  New Customer</Button><Button Click="NewOrder_Click">+  New Order</Button>
+                                        <Button Click="NewPayment_Click">Receive Payment</Button><Button Click="Export_Click">Export Backup</Button>
+                                        <TextBlock Text="Select a row in Customers or Orders to edit it. Use Delete to remove the selected record." Foreground="#8C8982" FontSize="11" TextWrapping="Wrap" Margin="2,14,2,0"/>
                                     </StackPanel>
                                 </Border>
                             </Grid>
                         </Grid>
 
                         <Grid x:Name="CustomersPage" Visibility="Collapsed">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1.3*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock Text="Customers" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                                    <DataGrid x:Name="CustomersGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderBrush="#2E2E2E" Foreground="#F4F1EB">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
-                                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="170"/>
-                                            <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*"/>
-                                        </DataGrid.Columns>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="1.7*"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                            <Border Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="16">
+                                <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                    <DockPanel Margin="0,0,0,12"><TextBlock Text="Customers" Foreground="#F5D57A" FontSize="20" FontWeight="Bold"/><Button DockPanel.Dock="Right" Width="100" Height="34" Click="DeleteCustomer_Click">Delete</Button></DockPanel>
+                                    <DataGrid x:Name="CustomersGrid" Grid.Row="1" SelectionChanged="CustomersGrid_SelectionChanged" IsReadOnly="True">
+                                        <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/><DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150"/><DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*"/></DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                             </Border>
-
-                            <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <StackPanel>
-                                    <TextBlock Text="Customer Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                                    <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="CustomerIdText" IsReadOnly="True" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Name" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="CustomerNameText" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Phone" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="CustomerPhoneText" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Note" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="CustomerNoteText" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Width="110" Margin="0,0,10,0" Click="ClearCustomer_Click">Clear</Button>
-                                        <Button Width="110" Click="SaveCustomer_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                                    </StackPanel>
+                            <Border Grid.Column="1" Margin="16,0,0,0" Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="18">
+                                <StackPanel><TextBlock Text="Customer Details" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,14"/>
+                                    <TextBlock Text="ID (blank = new)" Foreground="#A6A39C"/><TextBox x:Name="CustomerIdText" IsReadOnly="True" Margin="0,4,0,10"/>
+                                    <TextBlock Text="Name *" Foreground="#A6A39C"/><TextBox x:Name="CustomerNameText" Margin="0,4,0,10"/>
+                                    <TextBlock Text="Phone" Foreground="#A6A39C"/><TextBox x:Name="CustomerPhoneText" Margin="0,4,0,10"/>
+                                    <TextBlock Text="Note" Foreground="#A6A39C"/><TextBox x:Name="CustomerNoteText" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,4,0,14"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Width="100" Margin="0,0,8,0" Click="ClearCustomer_Click">Clear</Button><Button Width="110" Click="SaveCustomer_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold">Save</Button></StackPanel>
                                 </StackPanel>
                             </Border>
                         </Grid>
 
                         <Grid x:Name="OrdersPage" Visibility="Collapsed">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1.3*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock Text="Orders" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                                    <DataGrid x:Name="OrderGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderBrush="#2E2E2E" Foreground="#F4F1EB">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                                            <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                            <DataGridTextColumn Header="Item" Binding="{Binding Item}" Width="*"/>
-                                            <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:C0}}" Width="120"/>
-                                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110"/>
-                                            <DataGridTextColumn Header="Due" Binding="{Binding DueDate}" Width="120"/>
-                                        </DataGrid.Columns>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="1.7*"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                            <Border Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="16">
+                                <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                    <DockPanel Margin="0,0,0,12"><TextBlock Text="Orders" Foreground="#F5D57A" FontSize="20" FontWeight="Bold"/><Button DockPanel.Dock="Right" Width="100" Height="34" Click="DeleteOrder_Click">Delete</Button></DockPanel>
+                                    <DataGrid x:Name="OrderGrid" Grid.Row="1" SelectionChanged="OrderGrid_SelectionChanged" IsReadOnly="True">
+                                        <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="55"/><DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/><DataGridTextColumn Header="Work" Binding="{Binding Item}" Width="*"/><DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=N0}" Width="90"/><DataGridTextColumn Header="Paid" Binding="{Binding Paid, StringFormat=N0}" Width="90"/><DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90"/><DataGridTextColumn Header="Due" Binding="{Binding DueDate}" Width="100"/></DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                             </Border>
-
-                            <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <StackPanel>
-                                    <TextBlock Text="Order Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                                    <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="OrderIdText" IsReadOnly="True" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Customer" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <ComboBox x:Name="OrderCustomerCombo" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Item" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="OrderItemText" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Price" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="OrderPriceText" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Due Date" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <DatePicker x:Name="OrderDueDatePicker" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Status" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <ComboBox x:Name="OrderStatusCombo" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Note" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="OrderNoteText" Height="90" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Width="110" Margin="0,0,10,0" Click="ClearOrder_Click">Clear</Button>
-                                        <Button Width="110" Click="SaveOrder_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                                    </StackPanel>
+                            <Border Grid.Column="1" Margin="16,0,0,0" Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="18">
+                                <StackPanel><TextBlock Text="Order Details" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,14"/>
+                                    <TextBlock Text="ID (blank = new)" Foreground="#A6A39C"/><TextBox x:Name="OrderIdText" IsReadOnly="True" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Customer *" Foreground="#A6A39C"/><ComboBox x:Name="OrderCustomerCombo" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Work / Item *" Foreground="#A6A39C"/><TextBox x:Name="OrderItemText" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Price (AFN) *" Foreground="#A6A39C"/><TextBox x:Name="OrderPriceText" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Due Date" Foreground="#A6A39C"/><DatePicker x:Name="OrderDueDatePicker" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Status" Foreground="#A6A39C"/><ComboBox x:Name="OrderStatusCombo" Margin="0,4,0,9"/>
+                                    <TextBlock Text="Note" Foreground="#A6A39C"/><TextBox x:Name="OrderNoteText" Height="65" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,4,0,12"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Width="100" Margin="0,0,8,0" Click="ClearOrder_Click">Clear</Button><Button Width="110" Click="SaveOrder_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold">Save</Button></StackPanel>
                                 </StackPanel>
                             </Border>
                         </Grid>
 
                         <Grid x:Name="PaymentsPage" Visibility="Collapsed">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1.3*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="Payments" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
-                                    <DataGrid x:Name="PaymentsGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderBrush="#2E2E2E" Foreground="#F4F1EB">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70"/>
-                                            <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
-                                            <DataGridTextColumn Header="Order" Binding="{Binding OrderId}" Width="90"/>
-                                            <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat={}{0:C0}}" Width="150"/>
-                                            <DataGridTextColumn Header="Paid On" Binding="{Binding PaidOn}" Width="120"/>
-                                        </DataGrid.Columns>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="1.7*"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+                            <Border Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="16">
+                                <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                    <TextBlock Text="Payment History" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
+                                    <DataGrid x:Name="PaymentsGrid" Grid.Row="1" IsReadOnly="True">
+                                        <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/><DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/><DataGridTextColumn Header="Order" Binding="{Binding OrderId}" Width="80"/><DataGridTextColumn Header="Amount (AFN)" Binding="{Binding Amount, StringFormat=N0}" Width="130"/><DataGridTextColumn Header="Date" Binding="{Binding PaidOn}" Width="110"/></DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                             </Border>
-
-                            <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
-                                <StackPanel>
-                                    <TextBlock Text="Receive Payment" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
-                                    <TextBlock Text="Order" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <ComboBox x:Name="PaymentOrderCombo" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Amount" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <TextBox x:Name="PaymentAmountText" Margin="0,0,0,10"/>
-                                    <TextBlock Text="Paid On" Foreground="#B7B3AC" Margin="0,0,0,4"/>
-                                    <DatePicker x:Name="PaymentDatePicker" Margin="0,0,0,14"/>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Width="110" Margin="0,0,10,0" Click="ClearPayment_Click">Clear</Button>
-                                        <Button Width="110" Click="SavePayment_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
-                                    </StackPanel>
+                            <Border Grid.Column="1" Margin="16,0,0,0" Background="#111111" BorderBrush="#2C2C2C" BorderThickness="1" CornerRadius="16" Padding="18">
+                                <StackPanel><TextBlock Text="Receive Payment" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,14"/>
+                                    <TextBlock Text="Order" Foreground="#A6A39C"/><ComboBox x:Name="PaymentOrderCombo" DisplayMemberPath="DisplayName" SelectedValuePath="Id" Margin="0,4,0,12"/>
+                                    <TextBlock Text="Amount (AFN)" Foreground="#A6A39C"/><TextBox x:Name="PaymentAmountText" Margin="0,4,0,12"/>
+                                    <TextBlock Text="Paid On" Foreground="#A6A39C"/><DatePicker x:Name="PaymentDatePicker" Margin="0,4,0,16"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Width="100" Margin="0,0,8,0" Click="ClearPayment_Click">Clear</Button><Button Width="120" Click="SavePayment_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold">Record Payment</Button></StackPanel>
                                 </StackPanel>
                             </Border>
                         </Grid>
