@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -88,7 +89,7 @@ public partial class MainWindow : Window
         foreach (var button in new[] { navDashboard, navCustomers, navOrders, navPayments })
         {
             var active = string.Equals(button.Tag?.ToString(), page, StringComparison.OrdinalIgnoreCase);
-            button.Background = active ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(25, 25, 25)) : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(18, 18, 18));
+            button.Background = active ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(25, 25, 25)) : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(23, 23, 23));
             button.Foreground = active ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(245, 213, 122)) : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(244, 241, 235));
         }
     }
@@ -131,6 +132,26 @@ public partial class MainWindow : Window
     }
 
     private void ClearCustomer_Click(object sender, RoutedEventArgs e) => ClearCustomerForm();
+
+    private void DeleteCustomer_Click(object sender, RoutedEventArgs e)
+    {
+        if (CustomersGrid.SelectedItem is not Customer customer)
+        {
+            Warn("Select a customer to delete.");
+            return;
+        }
+
+        if (MessageBox.Show($"Delete customer '{customer.Name}' and all related records?", "Confirm delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            _database.DeleteCustomer(customer.Id);
+            ClearCustomerForm();
+            LoadAll();
+        }
+        catch (Exception ex) { ShowError("Could not delete customer", ex); }
+    }
 
     private void ClearCustomerForm()
     {
@@ -202,6 +223,26 @@ public partial class MainWindow : Window
     }
 
     private void ClearOrder_Click(object sender, RoutedEventArgs e) => ClearOrderForm();
+
+    private void DeleteOrder_Click(object sender, RoutedEventArgs e)
+    {
+        if (OrderGrid.SelectedItem is not Order order)
+        {
+            Warn("Select an order to delete.");
+            return;
+        }
+
+        if (MessageBox.Show($"Delete order #{order.Id} for {order.CustomerName}?", "Confirm delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            _database.DeleteOrder(order.Id);
+            ClearOrderForm();
+            LoadAll();
+        }
+        catch (Exception ex) { ShowError("Could not delete order", ex); }
+    }
 
     private void ClearOrderForm()
     {
