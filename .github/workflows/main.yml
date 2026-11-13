@@ -1,0 +1,38 @@
+
+name: Build AqibShah Windows App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore AqibShah.sln
+
+      - name: Publish Windows EXE
+        run: >
+          dotnet publish AqibShah.sln
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -o ./publish
+
+      - name: Upload application
+        uses: actions/upload-artifact@v4
+        with:
+          name: AqibShah-Windows
+          path: publish/
