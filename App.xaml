@@ -5,7 +5,7 @@
     <Application.Resources>
         <SolidColorBrush x:Key="BackgroundDark" Color="#050505"/>
         <SolidColorBrush x:Key="BackgroundAlt" Color="#0B0B0B"/>
-        <SolidColorBrush x:Key="SurfaceDark" Color="#111111"/>
+        <SolidColorBrush x:Key="SurfaceDark" Color="#121212"/>
         <SolidColorBrush x:Key="PanelDark" Color="#171717"/>
         <SolidColorBrush x:Key="BorderDark" Color="#2E2E2E"/>
         <SolidColorBrush x:Key="GoldPrimary" Color="#D4A63F"/>
@@ -16,13 +16,20 @@
         <SolidColorBrush x:Key="Success" Color="#7DE0A3"/>
         <SolidColorBrush x:Key="Danger" Color="#FF6B6B"/>
 
+        <LinearGradientBrush x:Key="GoldGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#F8E08C" Offset="0"/>
+            <GradientStop Color="#D3A33B" Offset="0.35"/>
+            <GradientStop Color="#A96F13" Offset="0.72"/>
+            <GradientStop Color="#F2D57E" Offset="1"/>
+        </LinearGradientBrush>
+
         <Style TargetType="Button">
             <Setter Property="Background" Value="#121212"/>
             <Setter Property="Foreground" Value="#F4F1EB"/>
             <Setter Property="BorderBrush" Value="#D4A63F"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -63,6 +70,10 @@
             <Setter Property="Foreground" Value="#F5F5F5"/>
             <Setter Property="BorderBrush" Value="#4A4A4A"/>
             <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#F3F0E8"/>
         </Style>
     </Application.Resources>
 </Application>
