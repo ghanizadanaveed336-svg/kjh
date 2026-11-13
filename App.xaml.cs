@@ -1,8 +1,7 @@
 using System.Windows;
 
-namespace TailorShop
+namespace TailorShop;
+
+public partial class App : Application
 {
-    public partial class App : Application
-    {
-    }
 }

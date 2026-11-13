@@ -1,6 +1,43 @@
-bin/
-obj/
-.vs/
-*.user
-*.suo
-*.cache
+# Aqib Shah Tailoring Manager
+
+This project is a C# WPF desktop application for a tailoring and clothing business. It was created as a modern Windows desktop version of the original Python desktop app, with a strong dark-gold design and management dashboard.
+
+## Features
+- Customer management
+- Order management
+- Payment tracking
+- Dashboard overview
+- SQLite database storage
+- Export / import backup support
+- Modern WPF UI with premium styling
+
+## Run the project
+
+### Requirements
+- Windows 10/11
+- .NET 8 SDK
+- Visual Studio 2022 or later
+
+### Commands
+```bash
+dotnet restore
+dotnet build
+dotnet run
+```
+
+## Project structure
+- `TailorShop.csproj` — project configuration
+- `App.xaml` — theme resources
+- `MainWindow.xaml` — dashboard and management screens
+- `Models.cs` — customer, order, and payment models
+- `DatabaseService.cs` — SQLite database logic
+
+## Database location
+The app stores its SQLite file in the user's Documents folder:
+
+```text
+%USERPROFILE%\Documents\AqibShahTailor.db
+```
+
+## Notes
+This is a completed design-first WPF conversion ready for further extension with measurements, styles, and receipt printing for the full business workflow.

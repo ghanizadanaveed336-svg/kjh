@@ -4,18 +4,21 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="BackgroundDark" Color="#050505"/>
-        <SolidColorBrush x:Key="SurfaceDark" Color="#101010"/>
+        <SolidColorBrush x:Key="BackgroundAlt" Color="#0B0B0B"/>
+        <SolidColorBrush x:Key="SurfaceDark" Color="#111111"/>
         <SolidColorBrush x:Key="PanelDark" Color="#171717"/>
+        <SolidColorBrush x:Key="BorderDark" Color="#2E2E2E"/>
         <SolidColorBrush x:Key="GoldPrimary" Color="#D4A63F"/>
-        <SolidColorBrush x:Key="GoldLight" Color="#F7D676"/>
+        <SolidColorBrush x:Key="GoldLight" Color="#F5D57A"/>
         <SolidColorBrush x:Key="GoldDark" Color="#8E6B22"/>
-        <SolidColorBrush x:Key="TextPrimary" Color="#F3F1ED"/>
-        <SolidColorBrush x:Key="TextMuted" Color="#B7B4AF"/>
-        <SolidColorBrush x:Key="AccentBlue" Color="#1F6FB5"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#F4F1EB"/>
+        <SolidColorBrush x:Key="TextMuted" Color="#B7B3AC"/>
+        <SolidColorBrush x:Key="Success" Color="#7DE0A3"/>
+        <SolidColorBrush x:Key="Danger" Color="#FF6B6B"/>
 
         <Style TargetType="Button">
-            <Setter Property="Background" Value="#111111"/>
-            <Setter Property="Foreground" Value="#F5F5F5"/>
+            <Setter Property="Background" Value="#121212"/>
+            <Setter Property="Foreground" Value="#F4F1EB"/>
             <Setter Property="BorderBrush" Value="#D4A63F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="14,8"/>
@@ -34,9 +37,32 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1E1E1E"/>
+                    <Setter Property="Background" Value="#1C1C1C"/>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#141414"/>
+            <Setter Property="Foreground" Value="#F5F5F5"/>
+            <Setter Property="BorderBrush" Value="#4A4A4A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#141414"/>
+            <Setter Property="Foreground" Value="#F5F5F5"/>
+            <Setter Property="BorderBrush" Value="#4A4A4A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+
+        <Style TargetType="DatePicker">
+            <Setter Property="Background" Value="#141414"/>
+            <Setter Property="Foreground" Value="#F5F5F5"/>
+            <Setter Property="BorderBrush" Value="#4A4A4A"/>
+            <Setter Property="BorderThickness" Value="1"/>
         </Style>
     </Application.Resources>
 </Application>
