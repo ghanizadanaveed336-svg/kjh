@@ -1,377 +1,90 @@
-using Microsoft.Data.Sqlite;
+<Window x:Class="TailorShop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Aqib Shah Tailoring &amp; Clothing"
+        Width="1200"
+        Height="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#050505"
+        ResizeMode="CanResize">
 
-namespace TailorShop;
+    <Window.Resources>
+        <LinearGradientBrush x:Key="GoldBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#F8E08C" Offset="0"/>
+            <GradientStop Color="#D7A83F" Offset="0.35"/>
+            <GradientStop Color="#B77D1D" Offset="0.72"/>
+            <GradientStop Color="#F0D678" Offset="1"/>
+        </LinearGradientBrush>
 
-public class DatabaseService
-{
-    public static string DbPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AqibShahTailor.db");
-    public static string ConnectionString => $"Data Source={DbPath}";
+        <SolidColorBrush x:Key="DarkBg" Color="#050505"/>
+        <SolidColorBrush x:Key="BlackPanel" Color="#0C0C0C"/>
+    </Window.Resources>
 
-    public static void Initialize()
-    {
-        Directory.CreateDirectory(Path.GetDirectoryName(DbPath)!);
+    <Grid Background="{StaticResource DarkBg}">
+        <Grid Width="940" Height="940" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Ellipse Width="930" Height="930" Stroke="{StaticResource GoldBrush}" StrokeThickness="12" Fill="Transparent"/>
+            <Ellipse Width="860" Height="860" Stroke="{StaticResource GoldBrush}" StrokeThickness="4" Fill="Transparent" Opacity="0.8"/>
 
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
+            <Canvas Width="930" Height="930" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Customers (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                Name TEXT NOT NULL,
-                Phone TEXT,
-                Note TEXT
-            );
+                <!-- Left scissors -->
+                <Path Data="M154,520 L240,550 L220,600 L154,580 Z" Fill="#0B0B0B" Stroke="{StaticResource GoldBrush}" StrokeThickness="7"/>
+                <Path Data="M160,528 L108,470" Stroke="{StaticResource GoldBrush}" StrokeThickness="7" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Path Data="M160,528 L118,610" Stroke="{StaticResource GoldBrush}" StrokeThickness="7" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Path Data="M108,470 L90,420" Stroke="{StaticResource GoldBrush}" StrokeThickness="7" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Path Data="M118,610 L92,700" Stroke="{StaticResource GoldBrush}" StrokeThickness="7" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Path Data="M160,555 L118,470" Stroke="#0A0A0A" StrokeThickness="5"/>
+                <Path Data="M158,555 L114,620" Stroke="#0A0A0A" StrokeThickness="5"/>
+                <Path Data="M110,468 L150,458" Stroke="{StaticResource GoldBrush}" StrokeThickness="8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Path Data="M110,614 L152,608" Stroke="{StaticResource GoldBrush}" StrokeThickness="8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <Ellipse Canvas.Left="92" Canvas.Top="420" Width="24" Height="24" Fill="{StaticResource GoldBrush}"/>
+                <Ellipse Canvas.Left="94" Canvas.Top="690" Width="24" Height="24" Fill="{StaticResource GoldBrush}"/>
 
-            CREATE TABLE IF NOT EXISTS Orders (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                CustomerId INTEGER NOT NULL,
-                Item TEXT,
-                Price REAL NOT NULL DEFAULT 0,
-                DueDate TEXT,
-                Status TEXT NOT NULL DEFAULT 'New',
-                Note TEXT,
-                FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
-            );
+                <!-- Mannequin body -->
+                <Ellipse Canvas.Left="372" Canvas.Top="170" Width="180" Height="180" Fill="#0B0B0B" Stroke="{StaticResource GoldBrush}" StrokeThickness="7"/>
+                <Path Data="M442,340 L505,500 L420,500 L382,340 Z" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="7"/>
+                <Path Data="M392,350 L330,440 L300,520 L368,520 L420,470 L392,350 Z" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="6"/>
+                <Path Data="M492,350 L560,440 L590,520 L520,520 L470,470 L492,350 Z" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="6"/>
+                <Path Data="M430,330 L448,505 L470,330 Z" Fill="#0A0A0A" Stroke="{StaticResource GoldBrush}" StrokeThickness="5"/>
+                <Path Data="M415,392 L448,440 L480,392" Stroke="{StaticResource GoldBrush}" StrokeThickness="4" Fill="Transparent"/>
+                <Path Data="M448,440 L448,530" Stroke="{StaticResource GoldBrush}" StrokeThickness="5"/>
+                <Path Data="M360,530 L448,560 L540,530" Stroke="{StaticResource GoldBrush}" StrokeThickness="6" Fill="Transparent"/>
+                <Path Data="M448,560 L448,680" Stroke="{StaticResource GoldBrush}" StrokeThickness="7"/>
+                <Path Data="M382,680 L438,718 L450,718 L448,680 Z" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="5"/>
+                <Path Data="M514,680 L460,718 L450,718 L448,680 Z" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="5"/>
 
-            CREATE TABLE IF NOT EXISTS Payments (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                OrderId INTEGER NOT NULL,
-                Amount REAL NOT NULL DEFAULT 0,
-                PaidOn TEXT NOT NULL,
-                FOREIGN KEY (OrderId) REFERENCES Orders(Id)
-            );
+                <!-- Shirt / jacket silhouette -->
+                <Path Data="M430,320 L404,390 L430,470 L448,470 L470,390 L448,320 Z" Fill="#0C0C0C" Stroke="{StaticResource GoldBrush}" StrokeThickness="4"/>
+                <Rectangle Canvas.Left="440" Canvas.Top="395" Width="18" Height="86" Fill="#111111" Stroke="{StaticResource GoldBrush}" StrokeThickness="4"/>
 
-            CREATE TABLE IF NOT EXISTS Measurements (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                CustomerId INTEGER NOT NULL,
-                ShirtLength TEXT,
-                Sleeve TEXT,
-                Shoulder TEXT,
-                Neck TEXT,
-                Chati TEXT,
-                Bagal TEXT,
-                Daman TEXT,
-                PantsLength TEXT,
-                PantsHem TEXT,
-                Notes TEXT,
-                FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
-            );
-        ";
-        command.ExecuteNonQuery();
-    }
+                <!-- Tape measure -->
+                <Path Data="M468,165 L446,640" Stroke="{StaticResource GoldBrush}" StrokeThickness="4" StrokeDashArray="2 12"/>
+                <Path Data="M466,176 L520,176" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,240 L520,240" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,304 L520,304" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,368 L520,368" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,432 L520,432" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,496 L520,496" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,560 L520,560" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M466,624 L520,624" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
 
-    public List<Customer> GetCustomers()
-    {
-        var items = new List<Customer>();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = "SELECT Id, Name, Phone, Note FROM Customers ORDER BY Name COLLATE NOCASE;";
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            items.Add(new Customer
-            {
-                Id = reader.GetInt32(0),
-                Name = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
-                Phone = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                Note = reader.IsDBNull(3) ? string.Empty : reader.GetString(3)
-            });
-        }
-        return items;
-    }
+                <!-- Decorative pocket -->
+                <Path Data="M420,440 L458,472 L494,440" Stroke="{StaticResource GoldBrush}" StrokeThickness="4" Fill="Transparent"/>
 
-    public void SaveCustomer(Customer customer)
-    {
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
+                <!-- Right tape reel -->
+                <Path Data="M700,540 C760,500 820,500 860,560 L860,670 C820,720 760,720 700,680 Z" Fill="#0F0F0F" Stroke="{StaticResource GoldBrush}" StrokeThickness="6"/>
+                <Path Data="M710,545 C760,520 820,520 850,565" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M710,680 C760,704 820,704 850,660" Stroke="{StaticResource GoldBrush}" StrokeThickness="3"/>
+                <Path Data="M711,548 L711,676" Stroke="{StaticResource GoldBrush}" StrokeThickness="4"/>
+                <Path Data="M786,520 L786,680" Stroke="{StaticResource GoldBrush}" StrokeThickness="4"/>
+                <Path Data="M820,515 L820,678" Stroke="{StaticResource GoldBrush}" StrokeThickness="4"/>
+                <Path Data="M690,602 L860,602" Stroke="{StaticResource GoldBrush}" StrokeThickness="3" Opacity="0.75"/>
+                <TextBlock Canvas.Left="720" Canvas.Top="610" Text="1 2 3 4 5" FontSize="28" FontWeight="Bold" Foreground="{StaticResource GoldBrush}" FontFamily="Verdana"/>
+            </Canvas>
 
-        if (customer.Id > 0)
-        {
-            command.CommandText = @"
-                UPDATE Customers SET Name=@Name, Phone=@Phone, Note=@Note WHERE Id=@Id;";
-            command.Parameters.AddWithValue("@Id", customer.Id);
-        }
-        else
-        {
-            command.CommandText = @"
-                INSERT INTO Customers (Name, Phone, Note) VALUES (@Name, @Phone, @Note);";
-        }
-
-        command.Parameters.AddWithValue("@Name", customer.Name);
-        command.Parameters.AddWithValue("@Phone", customer.Phone ?? string.Empty);
-        command.Parameters.AddWithValue("@Note", customer.Note ?? string.Empty);
-        command.ExecuteNonQuery();
-    }
-
-    public void DeleteCustomer(int customerId)
-    {
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM Customers WHERE Id=@Id;";
-        command.Parameters.AddWithValue("@Id", customerId);
-        command.ExecuteNonQuery();
-    }
-
-    public List<Order> GetOrders()
-    {
-        var items = new List<Order>();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT o.Id, o.CustomerId, c.Name, o.Item, o.Price, o.Status, o.DueDate, o.Note,
-                   COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)
-            FROM Orders o
-            INNER JOIN Customers c ON c.Id = o.CustomerId
-            ORDER BY o.Id DESC;";
-
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            items.Add(new Order
-            {
-                Id = reader.GetInt32(0),
-                CustomerId = reader.GetInt32(1),
-                CustomerName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                Item = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Price = reader.GetDecimal(4),
-                Status = reader.IsDBNull(5) ? "New" : reader.GetString(5),
-                DueDate = reader.IsDBNull(6) ? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd") : reader.GetString(6),
-                Note = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
-                Paid = reader.GetDecimal(8)
-            });
-        }
-        return items;
-    }
-
-    public void SaveOrder(Order order)
-    {
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-
-        if (order.Id > 0)
-        {
-            command.CommandText = @"
-                UPDATE Orders
-                SET CustomerId=@CustomerId,
-                    Item=@Item,
-                    Price=@Price,
-                    Status=@Status,
-                    DueDate=@DueDate,
-                    Note=@Note
-                WHERE Id=@Id;";
-            command.Parameters.AddWithValue("@Id", order.Id);
-        }
-        else
-        {
-            command.CommandText = @"
-                INSERT INTO Orders (CustomerId, Item, Price, Status, DueDate, Note)
-                VALUES (@CustomerId, @Item, @Price, @Status, @DueDate, @Note);";
-        }
-
-        command.Parameters.AddWithValue("@CustomerId", order.CustomerId);
-        command.Parameters.AddWithValue("@Item", order.Item ?? string.Empty);
-        command.Parameters.AddWithValue("@Price", order.Price);
-        command.Parameters.AddWithValue("@Status", order.Status ?? "New");
-        command.Parameters.AddWithValue("@DueDate", order.DueDate ?? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd"));
-        command.Parameters.AddWithValue("@Note", order.Note ?? string.Empty);
-        command.ExecuteNonQuery();
-    }
-
-    public void DeleteOrder(int orderId)
-    {
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM Orders WHERE Id=@Id;";
-        command.Parameters.AddWithValue("@Id", orderId);
-        command.ExecuteNonQuery();
-    }
-
-    public List<Payment> GetPayments()
-    {
-        var items = new List<Payment>();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT p.Id, p.OrderId, c.Name, p.Amount, p.PaidOn
-            FROM Payments p
-            INNER JOIN Orders o ON o.Id = p.OrderId
-            INNER JOIN Customers c ON c.Id = o.CustomerId
-            ORDER BY p.Id DESC;";
-
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            items.Add(new Payment
-            {
-                Id = reader.GetInt32(0),
-                OrderId = reader.GetInt32(1),
-                CustomerName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                Amount = reader.GetDecimal(3),
-                PaidOn = reader.IsDBNull(4) ? DateTime.Today.ToString("yyyy-MM-dd") : reader.GetString(4)
-            });
-        }
-        return items;
-    }
-
-    public void SavePayment(int orderId, decimal amount)
-    {
-        if (amount <= 0) return;
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"INSERT INTO Payments (OrderId, Amount, PaidOn) VALUES (@OrderId, @Amount, @PaidOn);";
-        command.Parameters.AddWithValue("@OrderId", orderId);
-        command.Parameters.AddWithValue("@Amount", amount);
-        command.Parameters.AddWithValue("@PaidOn", DateTime.Today.ToString("yyyy-MM-dd"));
-        command.ExecuteNonQuery();
-    }
-
-    public DashboardSummary GetDashboardSummary()
-    {
-        var summary = new DashboardSummary();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT
-                (SELECT COUNT(*) FROM Customers),
-                (SELECT COUNT(*) FROM Orders WHERE Status IN ('New', 'Doing')),
-                (SELECT COALESCE(SUM(Amount), 0) FROM Payments WHERE PaidOn = @Today),
-                (SELECT COALESCE(SUM(o.Price - COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)), 0) FROM Orders o);";
-        command.Parameters.AddWithValue("@Today", DateTime.Today.ToString("yyyy-MM-dd"));
-
-        using var reader = command.ExecuteReader();
-        if (reader.Read())
-        {
-            summary.CustomersCount = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-            summary.ActiveOrders = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
-            summary.TodayIncome = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
-            summary.Outstanding = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3);
-        }
-        return summary;
-    }
-
-    public List<Order> GetRecentOrders(int count = 10)
-    {
-        var items = new List<Order>();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT o.Id, o.CustomerId, c.Name, o.Item, o.Price, o.Status, o.DueDate, o.Note,
-                   COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)
-            FROM Orders o
-            INNER JOIN Customers c ON c.Id = o.CustomerId
-            ORDER BY o.Id DESC
-            LIMIT @Limit;";
-        command.Parameters.AddWithValue("@Limit", count);
-
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            items.Add(new Order
-            {
-                Id = reader.GetInt32(0),
-                CustomerId = reader.GetInt32(1),
-                CustomerName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                Item = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Price = reader.GetDecimal(4),
-                Status = reader.IsDBNull(5) ? "New" : reader.GetString(5),
-                DueDate = reader.IsDBNull(6) ? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd") : reader.GetString(6),
-                Note = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
-                Paid = reader.GetDecimal(8)
-            });
-        }
-        return items;
-    }
-
-    public List<Measurement> GetMeasurements()
-    {
-        var items = new List<Measurement>();
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = @"
-            SELECT m.Id, m.CustomerId, c.Name, m.ShirtLength, m.Sleeve, m.Shoulder, m.Neck, m.Chati, m.Bagal, m.Daman, m.PantsLength, m.PantsHem, m.Notes
-            FROM Measurements m
-            INNER JOIN Customers c ON c.Id = m.CustomerId
-            ORDER BY m.Id DESC;";
-
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            items.Add(new Measurement
-            {
-                Id = reader.GetInt32(0),
-                CustomerId = reader.GetInt32(1),
-                CustomerName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
-                ShirtLength = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
-                Sleeve = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
-                Shoulder = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
-                Neck = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
-                Chati = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
-                Bagal = reader.IsDBNull(8) ? string.Empty : reader.GetString(8),
-                Daman = reader.IsDBNull(9) ? string.Empty : reader.GetString(9),
-                PantsLength = reader.IsDBNull(10) ? string.Empty : reader.GetString(10),
-                PantsHem = reader.IsDBNull(11) ? string.Empty : reader.GetString(11),
-                Notes = reader.IsDBNull(12) ? string.Empty : reader.GetString(12)
-            });
-        }
-        return items;
-    }
-
-    public void SaveMeasurement(Measurement measurement)
-    {
-        using var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using var command = connection.CreateCommand();
-
-        if (measurement.Id > 0)
-        {
-            command.CommandText = @"
-                UPDATE Measurements SET
-                    CustomerId=@CustomerId,
-                    ShirtLength=@ShirtLength,
-                    Sleeve=@Sleeve,
-                    Shoulder=@Shoulder,
-                    Neck=@Neck,
-                    Chati=@Chati,
-                    Bagal=@Bagal,
-                    Daman=@Daman,
-                    PantsLength=@PantsLength,
-                    PantsHem=@PantsHem,
-                    Notes=@Notes
-                WHERE Id=@Id;";
-            command.Parameters.AddWithValue("@Id", measurement.Id);
-        }
-        else
-        {
-            command.CommandText = @"
-                INSERT INTO Measurements (
-                    CustomerId, ShirtLength, Sleeve, Shoulder, Neck, Chati, Bagal, Daman, PantsLength, PantsHem, Notes)
-                VALUES (@CustomerId, @ShirtLength, @Sleeve, @Shoulder, @Neck, @Chati, @Bagal, @Daman, @PantsLength, @PantsHem, @Notes);";
-        }
-
-        command.Parameters.AddWithValue("@CustomerId", measurement.CustomerId);
-        command.Parameters.AddWithValue("@ShirtLength", measurement.ShirtLength ?? string.Empty);
-        command.Parameters.AddWithValue("@Sleeve", measurement.Sleeve ?? string.Empty);
-        command.Parameters.AddWithValue("@Shoulder", measurement.Shoulder ?? string.Empty);
-        command.Parameters.AddWithValue("@Neck", measurement.Neck ?? string.Empty);
-        command.Parameters.AddWithValue("@Chati", measurement.Chati ?? string.Empty);
-        command.Parameters.AddWithValue("@Bagal", measurement.Bagal ?? string.Empty);
-        command.Parameters.AddWithValue("@Daman", measurement.Daman ?? string.Empty);
-        command.Parameters.AddWithValue("@PantsLength", measurement.PantsLength ?? string.Empty);
-        command.Parameters.AddWithValue("@PantsHem", measurement.PantsHem ?? string.Empty);
-        command.Parameters.AddWithValue("@Notes", measurement.Notes ?? string.Empty);
-        command.ExecuteNonQuery();
-    }
-}
+            <TextBlock Text="TAILOR" FontSize="240" FontWeight="Bold" Foreground="{StaticResource GoldBrush}" FontFamily="Impact" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,105"/>
+            <Path Data="M180,710 C260,660 400,640 520,700 S760,760 860,700" Stroke="{StaticResource GoldBrush}" StrokeThickness="8" StrokeLineCap="Round" Fill="Transparent"/>
+            <TextBlock Text="TAILOR" FontSize="104" FontWeight="Bold" Foreground="{StaticResource GoldBrush}" FontFamily="Impact" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Opacity="0.8"/>
+        </Grid>
+    </Grid>
+</Window>
