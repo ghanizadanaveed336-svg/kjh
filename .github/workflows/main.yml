@@ -20,11 +20,11 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore AqibShah.sln
+        run: dotnet restore TailorShop.csproj
 
       - name: Publish Windows EXE
         run: >
-          dotnet publish AqibShah.sln
+          dotnet publish TailorShop.csproj
           -c Release
           -r win-x64
           --self-contained true
