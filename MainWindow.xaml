@@ -4,14 +4,12 @@ namespace TailorShop;
 
 public class DatabaseService
 {
-    private static string DbPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AqibShahTailor.db");
-
+    public static string DbPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AqibShahTailor.db");
     public static string ConnectionString => $"Data Source={DbPath}";
 
     public static void Initialize()
     {
-        var db = DbPath;
-        Directory.CreateDirectory(Path.GetDirectoryName(db)!);
+        Directory.CreateDirectory(Path.GetDirectoryName(DbPath)!);
 
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
@@ -43,6 +41,22 @@ public class DatabaseService
                 PaidOn TEXT NOT NULL,
                 FOREIGN KEY (OrderId) REFERENCES Orders(Id)
             );
+
+            CREATE TABLE IF NOT EXISTS Measurements (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                CustomerId INTEGER NOT NULL,
+                ShirtLength TEXT,
+                Sleeve TEXT,
+                Shoulder TEXT,
+                Neck TEXT,
+                Chati TEXT,
+                Bagal TEXT,
+                Daman TEXT,
+                PantsLength TEXT,
+                PantsHem TEXT,
+                Notes TEXT,
+                FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
+            );
         ";
         command.ExecuteNonQuery();
     }
@@ -50,13 +64,10 @@ public class DatabaseService
     public List<Customer> GetCustomers()
     {
         var items = new List<Customer>();
-
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT Id, Name, Phone, Note FROM Customers ORDER BY Name COLLATE NOCASE;";
-
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
@@ -68,7 +79,6 @@ public class DatabaseService
                 Note = reader.IsDBNull(3) ? string.Empty : reader.GetString(3)
             });
         }
-
         return items;
     }
 
@@ -76,31 +86,23 @@ public class DatabaseService
     {
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
+
         if (customer.Id > 0)
         {
             command.CommandText = @"
-                UPDATE Customers
-                SET Name=@Name, Phone=@Phone, Note=@Note
-                WHERE Id=@Id;
-            ";
-            command.Parameters.AddWithValue("@Name", customer.Name);
-            command.Parameters.AddWithValue("@Phone", customer.Phone ?? string.Empty);
-            command.Parameters.AddWithValue("@Note", customer.Note ?? string.Empty);
+                UPDATE Customers SET Name=@Name, Phone=@Phone, Note=@Note WHERE Id=@Id;";
             command.Parameters.AddWithValue("@Id", customer.Id);
         }
         else
         {
             command.CommandText = @"
-                INSERT INTO Customers (Name, Phone, Note)
-                VALUES (@Name, @Phone, @Note);
-            ";
-            command.Parameters.AddWithValue("@Name", customer.Name);
-            command.Parameters.AddWithValue("@Phone", customer.Phone ?? string.Empty);
-            command.Parameters.AddWithValue("@Note", customer.Note ?? string.Empty);
+                INSERT INTO Customers (Name, Phone, Note) VALUES (@Name, @Phone, @Note);";
         }
 
+        command.Parameters.AddWithValue("@Name", customer.Name);
+        command.Parameters.AddWithValue("@Phone", customer.Phone ?? string.Empty);
+        command.Parameters.AddWithValue("@Note", customer.Note ?? string.Empty);
         command.ExecuteNonQuery();
     }
 
@@ -108,7 +110,6 @@ public class DatabaseService
     {
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Customers WHERE Id=@Id;";
         command.Parameters.AddWithValue("@Id", customerId);
@@ -118,18 +119,15 @@ public class DatabaseService
     public List<Order> GetOrders()
     {
         var items = new List<Order>();
-
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = @"
             SELECT o.Id, o.CustomerId, c.Name, o.Item, o.Price, o.Status, o.DueDate, o.Note,
                    COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)
             FROM Orders o
             INNER JOIN Customers c ON c.Id = o.CustomerId
-            ORDER BY o.Id DESC;
-        ";
+            ORDER BY o.Id DESC;";
 
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -147,7 +145,6 @@ public class DatabaseService
                 Paid = reader.GetDecimal(8)
             });
         }
-
         return items;
     }
 
@@ -155,8 +152,8 @@ public class DatabaseService
     {
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
+
         if (order.Id > 0)
         {
             command.CommandText = @"
@@ -167,30 +164,22 @@ public class DatabaseService
                     Status=@Status,
                     DueDate=@DueDate,
                     Note=@Note
-                WHERE Id=@Id;
-            ";
-            command.Parameters.AddWithValue("@CustomerId", order.CustomerId);
-            command.Parameters.AddWithValue("@Item", order.Item ?? string.Empty);
-            command.Parameters.AddWithValue("@Price", order.Price);
-            command.Parameters.AddWithValue("@Status", order.Status ?? "New");
-            command.Parameters.AddWithValue("@DueDate", order.DueDate ?? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd"));
-            command.Parameters.AddWithValue("@Note", order.Note ?? string.Empty);
+                WHERE Id=@Id;";
             command.Parameters.AddWithValue("@Id", order.Id);
         }
         else
         {
             command.CommandText = @"
                 INSERT INTO Orders (CustomerId, Item, Price, Status, DueDate, Note)
-                VALUES (@CustomerId, @Item, @Price, @Status, @DueDate, @Note);
-            ";
-            command.Parameters.AddWithValue("@CustomerId", order.CustomerId);
-            command.Parameters.AddWithValue("@Item", order.Item ?? string.Empty);
-            command.Parameters.AddWithValue("@Price", order.Price);
-            command.Parameters.AddWithValue("@Status", order.Status ?? "New");
-            command.Parameters.AddWithValue("@DueDate", order.DueDate ?? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd"));
-            command.Parameters.AddWithValue("@Note", order.Note ?? string.Empty);
+                VALUES (@CustomerId, @Item, @Price, @Status, @DueDate, @Note);";
         }
 
+        command.Parameters.AddWithValue("@CustomerId", order.CustomerId);
+        command.Parameters.AddWithValue("@Item", order.Item ?? string.Empty);
+        command.Parameters.AddWithValue("@Price", order.Price);
+        command.Parameters.AddWithValue("@Status", order.Status ?? "New");
+        command.Parameters.AddWithValue("@DueDate", order.DueDate ?? DateTime.Today.AddDays(7).ToString("yyyy-MM-dd"));
+        command.Parameters.AddWithValue("@Note", order.Note ?? string.Empty);
         command.ExecuteNonQuery();
     }
 
@@ -198,7 +187,6 @@ public class DatabaseService
     {
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM Orders WHERE Id=@Id;";
         command.Parameters.AddWithValue("@Id", orderId);
@@ -208,18 +196,15 @@ public class DatabaseService
     public List<Payment> GetPayments()
     {
         var items = new List<Payment>();
-
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = @"
             SELECT p.Id, p.OrderId, c.Name, p.Amount, p.PaidOn
             FROM Payments p
             INNER JOIN Orders o ON o.Id = p.OrderId
             INNER JOIN Customers c ON c.Id = o.CustomerId
-            ORDER BY p.Id DESC;
-        ";
+            ORDER BY p.Id DESC;";
 
         using var reader = command.ExecuteReader();
         while (reader.Read())
@@ -233,22 +218,16 @@ public class DatabaseService
                 PaidOn = reader.IsDBNull(4) ? DateTime.Today.ToString("yyyy-MM-dd") : reader.GetString(4)
             });
         }
-
         return items;
     }
 
     public void SavePayment(int orderId, decimal amount)
     {
         if (amount <= 0) return;
-
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
-        command.CommandText = @"
-            INSERT INTO Payments (OrderId, Amount, PaidOn)
-            VALUES (@OrderId, @Amount, @PaidOn);
-        ";
+        command.CommandText = @"INSERT INTO Payments (OrderId, Amount, PaidOn) VALUES (@OrderId, @Amount, @PaidOn);";
         command.Parameters.AddWithValue("@OrderId", orderId);
         command.Parameters.AddWithValue("@Amount", amount);
         command.Parameters.AddWithValue("@PaidOn", DateTime.Today.ToString("yyyy-MM-dd"));
@@ -258,7 +237,6 @@ public class DatabaseService
     public DashboardSummary GetDashboardSummary()
     {
         var summary = new DashboardSummary();
-
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
 
@@ -268,8 +246,7 @@ public class DatabaseService
                 (SELECT COUNT(*) FROM Customers),
                 (SELECT COUNT(*) FROM Orders WHERE Status IN ('New', 'Doing')),
                 (SELECT COALESCE(SUM(Amount), 0) FROM Payments WHERE PaidOn = @Today),
-                (SELECT COALESCE(SUM(o.Price - COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)), 0) FROM Orders o);
-        ";
+                (SELECT COALESCE(SUM(o.Price - COALESCE((SELECT SUM(p.Amount) FROM Payments p WHERE p.OrderId = o.Id), 0)), 0) FROM Orders o);";
         command.Parameters.AddWithValue("@Today", DateTime.Today.ToString("yyyy-MM-dd"));
 
         using var reader = command.ExecuteReader();
@@ -280,17 +257,14 @@ public class DatabaseService
             summary.TodayIncome = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2);
             summary.Outstanding = reader.IsDBNull(3) ? 0 : reader.GetDecimal(3);
         }
-
         return summary;
     }
 
     public List<Order> GetRecentOrders(int count = 10)
     {
-        var orders = new List<Order>();
-
+        var items = new List<Order>();
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
-
         using var command = connection.CreateCommand();
         command.CommandText = @"
             SELECT o.Id, o.CustomerId, c.Name, o.Item, o.Price, o.Status, o.DueDate, o.Note,
@@ -298,14 +272,13 @@ public class DatabaseService
             FROM Orders o
             INNER JOIN Customers c ON c.Id = o.CustomerId
             ORDER BY o.Id DESC
-            LIMIT @Limit;
-        ";
+            LIMIT @Limit;";
         command.Parameters.AddWithValue("@Limit", count);
 
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            orders.Add(new Order
+            items.Add(new Order
             {
                 Id = reader.GetInt32(0),
                 CustomerId = reader.GetInt32(1),
@@ -318,7 +291,87 @@ public class DatabaseService
                 Paid = reader.GetDecimal(8)
             });
         }
+        return items;
+    }
 
-        return orders;
+    public List<Measurement> GetMeasurements()
+    {
+        var items = new List<Measurement>();
+        using var connection = new SqliteConnection(ConnectionString);
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = @"
+            SELECT m.Id, m.CustomerId, c.Name, m.ShirtLength, m.Sleeve, m.Shoulder, m.Neck, m.Chati, m.Bagal, m.Daman, m.PantsLength, m.PantsHem, m.Notes
+            FROM Measurements m
+            INNER JOIN Customers c ON c.Id = m.CustomerId
+            ORDER BY m.Id DESC;";
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            items.Add(new Measurement
+            {
+                Id = reader.GetInt32(0),
+                CustomerId = reader.GetInt32(1),
+                CustomerName = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                ShirtLength = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                Sleeve = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                Shoulder = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
+                Neck = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                Chati = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
+                Bagal = reader.IsDBNull(8) ? string.Empty : reader.GetString(8),
+                Daman = reader.IsDBNull(9) ? string.Empty : reader.GetString(9),
+                PantsLength = reader.IsDBNull(10) ? string.Empty : reader.GetString(10),
+                PantsHem = reader.IsDBNull(11) ? string.Empty : reader.GetString(11),
+                Notes = reader.IsDBNull(12) ? string.Empty : reader.GetString(12)
+            });
+        }
+        return items;
+    }
+
+    public void SaveMeasurement(Measurement measurement)
+    {
+        using var connection = new SqliteConnection(ConnectionString);
+        connection.Open();
+        using var command = connection.CreateCommand();
+
+        if (measurement.Id > 0)
+        {
+            command.CommandText = @"
+                UPDATE Measurements SET
+                    CustomerId=@CustomerId,
+                    ShirtLength=@ShirtLength,
+                    Sleeve=@Sleeve,
+                    Shoulder=@Shoulder,
+                    Neck=@Neck,
+                    Chati=@Chati,
+                    Bagal=@Bagal,
+                    Daman=@Daman,
+                    PantsLength=@PantsLength,
+                    PantsHem=@PantsHem,
+                    Notes=@Notes
+                WHERE Id=@Id;";
+            command.Parameters.AddWithValue("@Id", measurement.Id);
+        }
+        else
+        {
+            command.CommandText = @"
+                INSERT INTO Measurements (
+                    CustomerId, ShirtLength, Sleeve, Shoulder, Neck, Chati, Bagal, Daman, PantsLength, PantsHem, Notes)
+                VALUES (@CustomerId, @ShirtLength, @Sleeve, @Shoulder, @Neck, @Chati, @Bagal, @Daman, @PantsLength, @PantsHem, @Notes);";
+        }
+
+        command.Parameters.AddWithValue("@CustomerId", measurement.CustomerId);
+        command.Parameters.AddWithValue("@ShirtLength", measurement.ShirtLength ?? string.Empty);
+        command.Parameters.AddWithValue("@Sleeve", measurement.Sleeve ?? string.Empty);
+        command.Parameters.AddWithValue("@Shoulder", measurement.Shoulder ?? string.Empty);
+        command.Parameters.AddWithValue("@Neck", measurement.Neck ?? string.Empty);
+        command.Parameters.AddWithValue("@Chati", measurement.Chati ?? string.Empty);
+        command.Parameters.AddWithValue("@Bagal", measurement.Bagal ?? string.Empty);
+        command.Parameters.AddWithValue("@Daman", measurement.Daman ?? string.Empty);
+        command.Parameters.AddWithValue("@PantsLength", measurement.PantsLength ?? string.Empty);
+        command.Parameters.AddWithValue("@PantsHem", measurement.PantsHem ?? string.Empty);
+        command.Parameters.AddWithValue("@Notes", measurement.Notes ?? string.Empty);
+        command.ExecuteNonQuery();
     }
 }

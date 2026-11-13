@@ -22,6 +22,23 @@ public class Order
     public string DisplayName => $"{CustomerName} - {Item}";
 }
 
+public class Measurement
+{
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    public string CustomerName { get; set; } = string.Empty;
+    public string ShirtLength { get; set; } = string.Empty;
+    public string Sleeve { get; set; } = string.Empty;
+    public string Shoulder { get; set; } = string.Empty;
+    public string Neck { get; set; } = string.Empty;
+    public string Chati { get; set; } = string.Empty;
+    public string Bagal { get; set; } = string.Empty;
+    public string Daman { get; set; } = string.Empty;
+    public string PantsLength { get; set; } = string.Empty;
+    public string PantsHem { get; set; } = string.Empty;
+    public string Notes { get; set; } = string.Empty;
+}
+
 public class Payment
 {
     public int Id { get; set; }

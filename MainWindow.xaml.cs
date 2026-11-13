@@ -31,6 +31,7 @@
                 <Button x:Name="navDashboard" Tag="Dashboard" Background="#191919" Foreground="#F5D57A" BorderBrush="#D4A63F" Margin="0,8,0,6" Height="42" FontWeight="Bold" Click="Nav_Click">Dashboard</Button>
                 <Button x:Name="navCustomers" Tag="Customers" Margin="0,6" Height="42" Click="Nav_Click">Customers</Button>
                 <Button x:Name="navOrders" Tag="Orders" Margin="0,6" Height="42" Click="Nav_Click">Orders</Button>
+                <Button x:Name="navMeasurements" Tag="Measurements" Margin="0,6" Height="42" Click="Nav_Click">Measurements</Button>
                 <Button x:Name="navPayments" Tag="Payments" Margin="0,6" Height="42" Click="Nav_Click">Payments</Button>
                 <Button x:Name="navBackup" Tag="Backup" Margin="0,26,0,6" Height="42" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A" Click="Backup_Click">Backup</Button>
             </StackPanel>
@@ -135,6 +136,7 @@
                                 <TextBlock Text="Quick Actions" Foreground="#F5D57A" FontSize="20" FontWeight="Bold" Margin="0,0,0,12"/>
                                 <Button Height="42" Margin="0,0,0,10" Click="NewCustomer_Click">New Customer</Button>
                                 <Button Height="42" Margin="0,0,0,10" Click="NewOrder_Click">New Order</Button>
+                                <Button Height="42" Margin="0,0,0,10" Click="NewMeasurement_Click">New Measurement</Button>
                                 <Button Height="42" Margin="0,0,0,10" Click="NewPayment_Click">Receive Payment</Button>
                                 <Button Height="42" Margin="0,0,0,10" Click="Export_Click">Export Backup</Button>
                                 <Button Height="42" Click="Import_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Import Backup</Button>
@@ -234,6 +236,82 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Button Width="110" Margin="0,0,10,0" Click="ClearOrder_Click">Clear</Button>
                                 <Button Width="110" Click="SaveOrder_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid x:Name="MeasurementsPage" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Measurements" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <DataGrid x:Name="MeasurementsGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" Background="#111111" RowBackground="#111111" AlternatingRowBackground="#171717" BorderThickness="0" Foreground="#F5F5F5" SelectionChanged="MeasurementsGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                                    <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
+                                    <DataGridTextColumn Header="Shirt" Binding="{Binding ShirtLength}" Width="90"/>
+                                    <DataGridTextColumn Header="Sleeve" Binding="{Binding Sleeve}" Width="90"/>
+                                    <DataGridTextColumn Header="Pants" Binding="{Binding PantsLength}" Width="90"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Margin="18,0,0,0" Background="#111111" BorderBrush="#2E2E2E" BorderThickness="1" CornerRadius="18" Padding="18">
+                        <StackPanel>
+                            <TextBlock Text="Measurement Form" Foreground="#F5D57A" FontSize="22" FontWeight="Bold" Margin="0,0,0,14"/>
+                            <TextBlock Text="ID" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                            <TextBox x:Name="MeasurementIdText" IsReadOnly="True" Margin="0,0,0,8"/>
+                            <TextBlock Text="Customer" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                            <ComboBox x:Name="MeasurementCustomerCombo" Margin="0,0,0,8"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                    <TextBlock Text="Shirt Length" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="ShirtLengthText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Sleeve" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="SleeveText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Shoulder" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="ShoulderText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Neck" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="NeckText" Margin="0,0,0,8"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                    <TextBlock Text="Chati" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="ChatiText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Bagal" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="BagalText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Daman" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="DamanText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Pants Length" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="PantsLengthText" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Pants Hem" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                                    <TextBox x:Name="PantsHemText" Margin="0,0,0,8"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <TextBlock Text="Notes" Foreground="#B7B3AC" Margin="0,0,0,4"/>
+                            <TextBox x:Name="MeasurementNotesText" Height="90" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,14"/>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Width="110" Margin="0,0,10,0" Click="ClearMeasurement_Click">Clear</Button>
+                                <Button Width="110" Click="SaveMeasurement_Click" Background="#D4A63F" Foreground="#111111" FontWeight="Bold" BorderBrush="#F5D57A">Save</Button>
                             </StackPanel>
                         </StackPanel>
                     </Border>

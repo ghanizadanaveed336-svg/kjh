@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
+using Microsoft.Data.Sqlite;
+using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
 
 namespace TailorShop;
 
@@ -11,6 +11,7 @@ public partial class MainWindow : Window
 {
     private readonly ObservableCollection<Customer> _customers = new();
     private readonly ObservableCollection<Order> _orders = new();
+    private readonly ObservableCollection<Measurement> _measurements = new();
     private readonly ObservableCollection<Payment> _payments = new();
     private readonly DatabaseService _database = new();
 
@@ -31,16 +32,17 @@ public partial class MainWindow : Window
     private void Nav_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button) return;
-
         var tag = button.Tag?.ToString();
 
         DashboardPage.Visibility = tag == "Dashboard" ? Visibility.Visible : Visibility.Collapsed;
         CustomersPage.Visibility = tag == "Customers" ? Visibility.Visible : Visibility.Collapsed;
         OrdersPage.Visibility = tag == "Orders" ? Visibility.Visible : Visibility.Collapsed;
+        MeasurementsPage.Visibility = tag == "Measurements" ? Visibility.Visible : Visibility.Collapsed;
         PaymentsPage.Visibility = tag == "Payments" ? Visibility.Visible : Visibility.Collapsed;
 
         if (tag == "Customers") LoadCustomers();
         if (tag == "Orders") LoadOrders();
+        if (tag == "Measurements") LoadMeasurements();
         if (tag == "Payments") LoadPayments();
         if (tag == "Dashboard") LoadDashboard();
     }
@@ -50,6 +52,7 @@ public partial class MainWindow : Window
         LoadDashboard();
         LoadCustomers();
         LoadOrders();
+        LoadMeasurements();
         LoadPayments();
     }
 
@@ -69,13 +72,13 @@ public partial class MainWindow : Window
     {
         _customers.Clear();
         foreach (var customer in _database.GetCustomers())
-        {
             _customers.Add(customer);
-        }
 
         CustomersGrid.ItemsSource = _customers;
         OrderCustomerCombo.ItemsSource = _customers;
         OrderCustomerCombo.DisplayMemberPath = "Name";
+        MeasurementCustomerCombo.ItemsSource = _customers;
+        MeasurementCustomerCombo.DisplayMemberPath = "Name";
         PaymentOrderCombo.ItemsSource = _orders;
         PaymentOrderCombo.DisplayMemberPath = "DisplayName";
     }
@@ -84,24 +87,27 @@ public partial class MainWindow : Window
     {
         _orders.Clear();
         foreach (var order in _database.GetOrders())
-        {
             _orders.Add(order);
-        }
 
         OrderGrid.ItemsSource = _orders;
-        OrderCustomerCombo.ItemsSource = _customers;
-        OrderCustomerCombo.DisplayMemberPath = "Name";
         PaymentOrderCombo.ItemsSource = _orders;
         PaymentOrderCombo.DisplayMemberPath = "DisplayName";
+    }
+
+    private void LoadMeasurements()
+    {
+        _measurements.Clear();
+        foreach (var measurement in _database.GetMeasurements())
+            _measurements.Add(measurement);
+
+        MeasurementsGrid.ItemsSource = _measurements;
     }
 
     private void LoadPayments()
     {
         _payments.Clear();
         foreach (var payment in _database.GetPayments())
-        {
             _payments.Add(payment);
-        }
 
         PaymentsGrid.ItemsSource = _payments;
     }
@@ -109,7 +115,6 @@ public partial class MainWindow : Window
     private void CustomersGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (CustomersGrid.SelectedItem is not Customer customer) return;
-
         CustomerIdText.Text = customer.Id.ToString();
         CustomerNameText.Text = customer.Name;
         CustomerPhoneText.Text = customer.Phone;
@@ -139,10 +144,7 @@ public partial class MainWindow : Window
         LoadDashboard();
     }
 
-    private void ClearCustomer_Click(object sender, RoutedEventArgs e)
-    {
-        ClearCustomerForm();
-    }
+    private void ClearCustomer_Click(object sender, RoutedEventArgs e) => ClearCustomerForm();
 
     private void ClearCustomerForm()
     {
@@ -162,9 +164,7 @@ public partial class MainWindow : Window
         OrderPriceText.Text = order.Price.ToString();
         OrderNoteText.Text = order.Note;
         OrderStatusCombo.SelectedItem = order.Status;
-
-        if (!string.IsNullOrWhiteSpace(order.DueDate) && DateTime.TryParse(order.DueDate, out var due))
-            OrderDueDatePicker.SelectedDate = due;
+        OrderDueDatePicker.SelectedDate = DateTime.TryParse(order.DueDate, out var due) ? due : DateTime.Today.AddDays(7);
 
         foreach (Customer customer in _customers)
         {
@@ -184,8 +184,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var priceText = OrderPriceText.Text.Trim();
-        if (!decimal.TryParse(priceText, out var price) || price < 0)
+        if (!decimal.TryParse(OrderPriceText.Text.Trim(), out var price) || price < 0)
         {
             MessageBox.Show("Please enter a valid price.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -210,10 +209,7 @@ public partial class MainWindow : Window
         LoadPayments();
     }
 
-    private void ClearOrder_Click(object sender, RoutedEventArgs e)
-    {
-        ClearOrderForm();
-    }
+    private void ClearOrder_Click(object sender, RoutedEventArgs e) => ClearOrderForm();
 
     private void ClearOrderForm()
     {
@@ -225,6 +221,81 @@ public partial class MainWindow : Window
         OrderStatusCombo.SelectedIndex = 0;
         OrderCustomerCombo.SelectedIndex = -1;
         OrderGrid.SelectedItem = null;
+    }
+
+    private void MeasurementsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (MeasurementsGrid.SelectedItem is not Measurement measurement) return;
+
+        MeasurementIdText.Text = measurement.Id.ToString();
+        ShirtLengthText.Text = measurement.ShirtLength;
+        SleeveText.Text = measurement.Sleeve;
+        ShoulderText.Text = measurement.Shoulder;
+        NeckText.Text = measurement.Neck;
+        ChatiText.Text = measurement.Chati;
+        BagalText.Text = measurement.Bagal;
+        DamanText.Text = measurement.Daman;
+        PantsLengthText.Text = measurement.PantsLength;
+        PantsHemText.Text = measurement.PantsHem;
+        MeasurementNotesText.Text = measurement.Notes;
+
+        foreach (Customer customer in _customers)
+        {
+            if (customer.Id == measurement.CustomerId)
+            {
+                MeasurementCustomerCombo.SelectedItem = customer;
+                break;
+            }
+        }
+    }
+
+    private void SaveMeasurement_Click(object sender, RoutedEventArgs e)
+    {
+        if (MeasurementCustomerCombo.SelectedItem is not Customer customer)
+        {
+            MessageBox.Show("Please select a customer.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var measurement = new Measurement
+        {
+            Id = int.TryParse(MeasurementIdText.Text, out var id) ? id : 0,
+            CustomerId = customer.Id,
+            CustomerName = customer.Name,
+            ShirtLength = ShirtLengthText.Text.Trim(),
+            Sleeve = SleeveText.Text.Trim(),
+            Shoulder = ShoulderText.Text.Trim(),
+            Neck = NeckText.Text.Trim(),
+            Chati = ChatiText.Text.Trim(),
+            Bagal = BagalText.Text.Trim(),
+            Daman = DamanText.Text.Trim(),
+            PantsLength = PantsLengthText.Text.Trim(),
+            PantsHem = PantsHemText.Text.Trim(),
+            Notes = MeasurementNotesText.Text.Trim()
+        };
+
+        _database.SaveMeasurement(measurement);
+        ClearMeasurementForm();
+        LoadMeasurements();
+    }
+
+    private void ClearMeasurement_Click(object sender, RoutedEventArgs e) => ClearMeasurementForm();
+
+    private void ClearMeasurementForm()
+    {
+        MeasurementIdText.Text = string.Empty;
+        MeasurementCustomerCombo.SelectedIndex = -1;
+        ShirtLengthText.Text = string.Empty;
+        SleeveText.Text = string.Empty;
+        ShoulderText.Text = string.Empty;
+        NeckText.Text = string.Empty;
+        ChatiText.Text = string.Empty;
+        BagalText.Text = string.Empty;
+        DamanText.Text = string.Empty;
+        PantsLengthText.Text = string.Empty;
+        PantsHemText.Text = string.Empty;
+        MeasurementNotesText.Text = string.Empty;
+        MeasurementsGrid.SelectedItem = null;
     }
 
     private void SavePayment_Click(object sender, RoutedEventArgs e)
@@ -248,10 +319,7 @@ public partial class MainWindow : Window
         LoadOrders();
     }
 
-    private void ClearPayment_Click(object sender, RoutedEventArgs e)
-    {
-        ClearPaymentForm();
-    }
+    private void ClearPayment_Click(object sender, RoutedEventArgs e) => ClearPaymentForm();
 
     private void ClearPaymentForm()
     {
@@ -272,16 +340,19 @@ public partial class MainWindow : Window
         ClearOrderForm();
     }
 
+    private void NewMeasurement_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage("Measurements");
+        ClearMeasurementForm();
+    }
+
     private void NewPayment_Click(object sender, RoutedEventArgs e)
     {
         ShowPage("Payments");
         ClearPaymentForm();
     }
 
-    private void Backup_Click(object sender, RoutedEventArgs e)
-    {
-        Export_Click(sender, e);
-    }
+    private void Backup_Click(object sender, RoutedEventArgs e) => Export_Click(sender, e);
 
     private void Export_Click(object sender, RoutedEventArgs e)
     {
@@ -295,8 +366,8 @@ public partial class MainWindow : Window
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                using var source = new System.Data.SQLite.SQLiteConnection(DatabaseService.ConnectionString);
-                using var destination = new System.Data.SQLite.SQLiteConnection($"Data Source={saveFileDialog.FileName}");
+                using var source = new SqliteConnection(DatabaseService.ConnectionString);
+                using var destination = new SqliteConnection($"Data Source={saveFileDialog.FileName}");
                 source.Open();
                 destination.Open();
                 source.BackupDatabase(destination, "main", "main", -1, null, 0);
@@ -320,9 +391,8 @@ public partial class MainWindow : Window
 
             if (openFileDialog.ShowDialog() == true)
             {
-                var backupPath = openFileDialog.FileName;
-                using var backup = new System.Data.SQLite.SQLiteConnection($"Data Source={backupPath}");
-                using var target = new System.Data.SQLite.SQLiteConnection(DatabaseService.ConnectionString);
+                using var backup = new SqliteConnection($"Data Source={openFileDialog.FileName}");
+                using var target = new SqliteConnection(DatabaseService.ConnectionString);
                 backup.Open();
                 target.Open();
                 backup.BackupDatabase(target, "main", "main", -1, null, 0);
@@ -341,6 +411,7 @@ public partial class MainWindow : Window
         DashboardPage.Visibility = pageName == "Dashboard" ? Visibility.Visible : Visibility.Collapsed;
         CustomersPage.Visibility = pageName == "Customers" ? Visibility.Visible : Visibility.Collapsed;
         OrdersPage.Visibility = pageName == "Orders" ? Visibility.Visible : Visibility.Collapsed;
+        MeasurementsPage.Visibility = pageName == "Measurements" ? Visibility.Visible : Visibility.Collapsed;
         PaymentsPage.Visibility = pageName == "Payments" ? Visibility.Visible : Visibility.Collapsed;
     }
 }
